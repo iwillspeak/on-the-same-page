@@ -1,0 +1,34 @@
+name: Build Docs
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install Docket
+      run: |
+        mkdir -p _site/
+        echo "<h1>Hello Custom Pages World" > _site/index.html
+    - name: Push artefact
+      uses: actions/upload-pages-artifact@v0
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
